@@ -104,6 +104,12 @@ A runtime dependency for tranSMART that implements the Core API
 
         context.'component-scan'('base-package': 'org.transmartproject.db.config')
 
+        context.'component-scan'('base-package': 'org.transmartproject.db.contact') {
+            context.'include-filter'(
+                    type:   'annotation',
+                    expression: Component.canonicalName)
+        }
+
         if (!config.org.transmartproject.i2b2.user_id) {
             config.org.transmartproject.i2b2.user_id = 'i2b2'
         }

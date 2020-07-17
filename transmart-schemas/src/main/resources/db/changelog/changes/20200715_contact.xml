@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="gaurav.narula@epfl.ch" id="20200715-0" dbms="PostgreSQL">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="contact" schemaName="i2b2demodata" />
+            </not>
+        </preConditions>
+        <comment>
+            Creates the Contact Table if it doesn't already exist.
+        </comment>
+
+        <createTable remarks="Table contains a hash of the user's query and the number of DIDs contacted successfully." schemaName="i2b2demodata" tableName="contact">
+            <column name="hash" remarks="Hash of the query" type="TEXT"/>
+            <column name="user_id" remarks="User who made the query" type="TEXT"/>
+            <column name="count" type="BIGINT"/>
+            <column name="version" type="BIGINT"/>
+        </createTable>
+        <addPrimaryKey schemaName="i2b2demodata" tableName="contact" columnNames="hash,user_id" />
+    </changeSet>
+
+    <changeSet author="gaurav.narula@epfl.ch" id="20200715-1" dbms="PostgreSQL">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="contact_uncontacted" schemaName="i2b2demodata" />
+            </not>
+        </preConditions>
+        <comment>
+            Creates the Uncontacted table if it doesn't exist
+        </comment>
+
+        <createTable remarks="Table contains a list of DIDs that we couldn't reach out to in a previous attempt" schemaName="i2b2demodata" tableName="contact_uncontacted">
+            <column name="contact_hash" type="TEXT" />
+            <column name="contact_user_id" type="TEXT" />
+            <column name="uncontacted_string" type="TEXT" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="contact_hash,contact_user_id" baseTableSchemaName="i2b2demodata" baseTableName="contact_uncontacted"
+                                 referencedTableName="contact" referencedTableSchemaName="i2b2demodata"
+                                 referencedColumnNames="hash,user_id"
+                                 constraintName="fk_constraint"
+        />
+    </changeSet>
+
+</databaseChangeLog>
