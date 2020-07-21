@@ -89,6 +89,11 @@ class User extends PrincipalCoreDb implements org.transmartproject.core.users.Us
     }
 
     @Override
+    String getPublicInvitation() {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
     Map<String, PatientDataAccessLevel> getStudyToPatientDataAccessLevel() {
         List<Object[]> securedObjectWithaccessLevelPairs = SecuredObjectAccessView.createCriteria().list {
             projections {

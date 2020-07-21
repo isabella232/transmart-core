@@ -31,6 +31,13 @@ interface User {
     String getEmail()
 
     /**
+     * User's public invitation
+     *
+     * @return public invitation
+     */
+    String getPublicInvitation()
+
+    /**
      * @return true if user is admin, otherwise false
      */
     boolean isAdmin()

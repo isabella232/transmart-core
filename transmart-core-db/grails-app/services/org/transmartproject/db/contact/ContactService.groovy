@@ -34,8 +34,9 @@ class ContactService implements ContactResource {
 
         // TODO: Make the call to inform the DIDs
         def count = did.size()
+        def invite = user.getPublicInvitation()
+        log.info "Contacting patients with identifiers ${did} and sending them `${invite}`"
 
-        log.info "Contacting patients with identifiers ${did}"
 
         Contact contactRecord = new Contact(
                 hash: hash,

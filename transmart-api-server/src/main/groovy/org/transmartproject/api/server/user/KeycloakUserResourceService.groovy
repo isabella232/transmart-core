@@ -48,6 +48,8 @@ class KeycloakUserResourceService implements UsersResource {
     @Value('${keycloak.auth-server-url}')
     String keycloakServerUrl
 
+    static final INVITATION_ATTRIBUTE = "publicInvitation"
+
     @Override
     User getUserFromUsername(String username) throws NoSuchResourceException {
         User user = getUsers()?.find { it.username == username }
@@ -92,12 +94,17 @@ class KeycloakUserResourceService implements UsersResource {
 
         String realName = null
         String email = null
+        String publicInvitation = null
         if (principal.details instanceof SimpleKeycloakAccount) {
             def context = ((SimpleKeycloakAccount) principal.details).keycloakSecurityContext
             if (context?.token) {
                 AccessToken token = context.token
                 realName = token.name
                 email = token.email
+                def otherClaims = token.getOtherClaims()
+                if (otherClaims) {
+                    publicInvitation = otherClaims.getOrDefault(INVITATION_ATTRIBUTE, "")
+                }
             } else {
                 log.debug("No token in the security context. Giving up on getting email and name.")
             }
@@ -105,7 +112,7 @@ class KeycloakUserResourceService implements UsersResource {
             log.debug("The details field of unexpected type: ${principal.details?.class}. Giving up on getting email and name.")
         }
 
-        new SimpleUser(username, realName, email, admin, studyToAccLvl)
+        new SimpleUser(username, realName, email, admin, studyToAccLvl, publicInvitation)
     }
 
     private Set<String> getRolesForUser(String userId) {
@@ -132,10 +139,16 @@ class KeycloakUserResourceService implements UsersResource {
         roles.remove(ROLE_PUBLIC)
         final boolean admin = roles.remove(ROLE_ADMIN)
         Map<String, PatientDataAccessLevel> studyToPatientDataAccessLevel = buildStudyToPatientDataAccessLevel(roles)
+        def publicInvitation = ""
+        if (keycloakUser.attributes) {
+            keycloakUser.attributes.getOrDefault(INVITATION_ATTRIBUTE, [''])[0]
+        }
         new SimpleUser(keycloakUser.id,
                 "$keycloakUser.firstName $keycloakUser.lastName",
                 keycloakUser.email,
                 admin,
-                studyToPatientDataAccessLevel)
+                studyToPatientDataAccessLevel,
+                publicInvitation
+        )
     }
 }

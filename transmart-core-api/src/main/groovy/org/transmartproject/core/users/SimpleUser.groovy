@@ -12,4 +12,5 @@ class SimpleUser implements User {
     String email
     boolean admin
     Map<String, PatientDataAccessLevel> studyToPatientDataAccessLevel
+    String publicInvitation
 }

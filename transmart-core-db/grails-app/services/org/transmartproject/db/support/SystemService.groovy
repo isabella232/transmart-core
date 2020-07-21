@@ -237,7 +237,7 @@ class SystemService implements SystemResource {
                     .collect(Collectors.toSet())
             List<User> fakeUsers = permissionSets.stream()
                     .map({ Pair<Boolean, Map<String, PatientDataAccessLevel>> permissions ->
-                new SimpleUser('system', null, null, permissions.left, permissions.right)
+                new SimpleUser('system', null, null, permissions.left, permissions.right, "")
             })
                     .collect(Collectors.toList())
             for (User user: fakeUsers) {
