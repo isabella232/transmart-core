@@ -23,6 +23,22 @@ class ContactService implements ContactResource {
         String constraintJSON = constraint.toJson()
         String hash =  constraintJSON.encodeAsSHA1()
 
+        def invite = user.getPublicInvitation()
+
+        def existingRecord = Contact.findWhere(hash: hash, user_id: user.getUsername())
+
+        if (existingRecord != null) {
+            if (existingRecord.uncontacted.size() == 0) {
+                log.info "You've already contacted all patients"
+                return existingRecord.count
+            }
+
+            log.info "Contacting ${existingRecord.uncontacted} and sending them `${invite}`"
+
+            // TODO: Update the count and record
+            return existingRecord.count
+        }
+
         Hypercube data = multiDimensionalDataResource.retrieveClinicalData(constraint, user)
 
         def did = []
@@ -32,9 +48,8 @@ class ContactService implements ContactResource {
             }
         }
 
-        // TODO: Make the call to inform the DIDs
+        // TODO: Make the call to inform the DIDs and update the count
         def count = did.size()
-        def invite = user.getPublicInvitation()
         log.info "Contacting patients with identifiers ${did} and sending them `${invite}`"
 
 
