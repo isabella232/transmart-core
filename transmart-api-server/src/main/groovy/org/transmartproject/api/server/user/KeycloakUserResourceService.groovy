@@ -103,6 +103,7 @@ class KeycloakUserResourceService implements UsersResource {
                 email = token.email
                 def otherClaims = token.getOtherClaims()
                 if (otherClaims) {
+                    log.info "otherClaims: ${otherClaims}"
                     publicInvitation = otherClaims.getOrDefault(INVITATION_ATTRIBUTE, "")
                 }
             } else {
@@ -141,6 +142,7 @@ class KeycloakUserResourceService implements UsersResource {
         Map<String, PatientDataAccessLevel> studyToPatientDataAccessLevel = buildStudyToPatientDataAccessLevel(roles)
         def publicInvitation = ""
         if (keycloakUser.attributes) {
+            log.info "Attributes: ${keycloakUser.attributes}"
             keycloakUser.attributes.getOrDefault(INVITATION_ATTRIBUTE, [''])[0]
         }
         new SimpleUser(keycloakUser.id,
