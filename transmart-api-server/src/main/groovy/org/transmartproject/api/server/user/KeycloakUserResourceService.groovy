@@ -48,7 +48,7 @@ class KeycloakUserResourceService implements UsersResource {
     @Value('${keycloak.auth-server-url}')
     String keycloakServerUrl
 
-    static final INVITATION_ATTRIBUTE = "publicInvitation"
+    static final INVITATION_ATTRIBUTE = "publicInvite"
 
     @Override
     User getUserFromUsername(String username) throws NoSuchResourceException {
