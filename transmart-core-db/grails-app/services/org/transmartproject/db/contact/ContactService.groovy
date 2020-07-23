@@ -1,8 +1,10 @@
 package org.transmartproject.db.contact
 
+import com.google.common.collect.Sets
 import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.contact.ContactResource
+import org.transmartproject.core.contact.ContactResponse
 import org.transmartproject.core.dataquery.Patient
 import org.transmartproject.core.multidimquery.Hypercube
 import org.transmartproject.core.multidimquery.MultiDimensionalDataResource
@@ -19,7 +21,7 @@ class ContactService implements ContactResource {
     MultiDimensionalDataResource multiDimensionalDataResource
 
     @Override
-    int contactForConstraint(Constraint constraint, User user) {
+    ContactResponse contactForConstraint(Constraint constraint, User user) {
         String constraintJSON = constraint.toJson()
         String hash =  constraintJSON.encodeAsSHA1()
 
@@ -27,25 +29,33 @@ class ContactService implements ContactResource {
 
         def existingRecord = Contact.findWhere(hash: hash, user_id: user.getUsername())
 
-        if (existingRecord != null) {
-            if (existingRecord.uncontacted.size() == 0) {
-                log.info "You've already contacted all patients"
-                return existingRecord.count
-            }
-
-            log.info "Contacting ${existingRecord.uncontacted} and sending them `${invite}`"
-
-            // TODO: Update the count and record
-            return existingRecord.count
-        }
-
         Hypercube data = multiDimensionalDataResource.retrieveClinicalData(constraint, user)
 
-        def did = []
+        def did = new HashSet<String>()
         for (Patient patient : data.dimensionElements(DimensionImpl.PATIENT)) {
             patient.subjectIds.each { k, v ->
                 did.add(v)
             }
+        }
+
+        if (existingRecord != null) {
+            def diff = Sets.difference(did, existingRecord.contacted)
+            if (diff.isEmpty()) {
+                log.info "You've already contacted all patients with `${invite}"
+                return new ContactResponse(
+                        previouslyContacted: true,
+                        previousContactCount: existingRecord.count,
+                        contactCount: existingRecord.count
+                )
+            }
+            log.info "Contacting ${diff} and sending them `${invite}`"
+
+            // TODO: Update the count and record
+            return new ContactResponse(
+                    previouslyContacted: true,
+                    previousContactCount: existingRecord.count,
+                    contactCount: existingRecord.count
+            )
         }
 
         // TODO: Make the call to inform the DIDs and update the count
@@ -57,9 +67,14 @@ class ContactService implements ContactResource {
                 hash: hash,
                 user_id: user.getUsername(),
                 count: count,
+                contacted: did, // TODO: Remove failed contacts from this set
         )
         contactRecord.save(flush: true, failOnError: true)
 
-        count
+        new ContactResponse(
+                previouslyContacted: false,
+                previousContactCount: contactRecord.count,
+                contactCount: contactRecord.count
+        )
     }
 }

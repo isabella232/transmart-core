@@ -15,8 +15,7 @@ class ContactController extends AbstractQueryController {
         def args = getGetOrPostParams()
 
         Constraint constraint = bindConstraint((String) args.constraint)
-        def count = contactResource.contactForConstraint(constraint, authContext.user)
-        def result = [contactCount: count]
-        render result as JSON
+        def contactResponse = contactResource.contactForConstraint(constraint, authContext.user)
+        render contactResponse as JSON
     }
 }

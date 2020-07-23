@@ -5,7 +5,7 @@ class Contact implements  Serializable {
     String user_id
     Integer count
 
-    static hasMany = [uncontacted: String]
+    static hasMany = [contacted: String]
 
     static constraints = {
         hash nullable: false
