@@ -53,7 +53,7 @@ class ContactService implements ContactResource {
 
         def invite = user.getPublicInvitation()
 
-        def existingRecord = Contact.findWhere(queryId: queryId, user_id: user.getUsername())
+        def existingRecord = Contact.findWhere(query_id: queryId, user_id: user.getUsername())
 
         Hypercube data = multiDimensionalDataResource.retrieveClinicalData(constraint, user)
 
