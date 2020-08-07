@@ -14,5 +14,5 @@ interface ContactResource {
      */
     ContactResponse contactForQuery(Long queryId, String synopsis, User user)
 
-    ContactResponse getContactRecord(queryId, User user)
+    ContactResponse getContactRecord(Long queryId, User user)
 }

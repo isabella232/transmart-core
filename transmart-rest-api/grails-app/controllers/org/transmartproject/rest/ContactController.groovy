@@ -14,10 +14,7 @@ class ContactController extends AbstractQueryController {
     @Autowired
     ContactResource contactResource
 
-    def save(@RequestParam('api_version') String apiVersion) {
-        def args = getGetOrPostParams()
-
-        int queryId = args.queryId
+    def save(@RequestParam('api_version') String apiVersion, @PathVariable('queryId') Long queryId) {
         String synopsis = args.synopsis
         try {
             def contactResponse = contactResource.contactForQuery(queryId, synopsis, authContext.user)
@@ -27,7 +24,7 @@ class ContactController extends AbstractQueryController {
         }
     }
 
-    def get(@RequestParam('api_version') String apiVersion, @PathVariable('queryId') String queryId) {
+    def show(@RequestParam('api_version') String apiVersion, @PathVariable('queryId') Long queryId) {
         try {
             def contactResponse = contactResource.getContactRecord(queryId, authContext.user)
             render contactResponse as JSON

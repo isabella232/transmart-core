@@ -1,11 +1,9 @@
 package org.transmartproject.rest
 
-import com.google.common.collect.Sets
 import grails.validation.ValidationException
 import org.grails.web.converters.exceptions.ConverterException
 import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.client.RestTemplate
 import org.transmartproject.core.contact.ContactResource
 import org.transmartproject.core.contact.ContactResponse
 import org.transmartproject.core.dataquery.Patient
@@ -22,9 +20,6 @@ import org.transmartproject.rest.client.GBBackendClient
 import org.transmartproject.rest.marshallers.QueryRepresentation
 
 class ContactService implements ContactResource {
-
-    @Autowired
-    SessionFactory sessionFactory
 
     @Autowired
     MultiDimensionalDataResource multiDimensionalDataResource
@@ -90,9 +85,8 @@ class ContactService implements ContactResource {
     }
 
     @Override
-    ContactResponse getContactRecord(Object queryId, User user) {
+    ContactResponse getContactRecord(Long queryId, User user) {
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
-        Constraint constraint = parseConstraint(queryRepresentation.queryConstraint)
 
         def existingRecord = Contact.findWhere(queryId: queryID, user_id: user.getUsername())
 
