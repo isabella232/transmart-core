@@ -13,35 +13,12 @@
         </comment>
 
         <createTable remarks="Table contains a hash of the user's query and the number of DIDs contacted successfully." schemaName="i2b2demodata" tableName="contact">
-            <column name="hash" remarks="Hash of the query" type="TEXT"/>
             <column name="user_id" remarks="User who made the query" type="TEXT"/>
+            <column name="query_id" type="BIGINT"/>
             <column name="count" type="BIGINT"/>
+            <column name="synopsis" type="TEXT"/>
             <column name="version" type="BIGINT"/>
         </createTable>
         <addPrimaryKey schemaName="i2b2demodata" tableName="contact" columnNames="hash,user_id" />
     </changeSet>
-
-    <changeSet author="gaurav.narula@epfl.ch" id="20200715-1" dbms="PostgreSQL">
-        <preConditions onFail="CONTINUE">
-            <not>
-                <tableExists tableName="contact_contacted" schemaName="i2b2demodata" />
-            </not>
-        </preConditions>
-        <comment>
-            Creates the Contacted table if it doesn't exist
-        </comment>
-
-        <createTable remarks="Table contains a list of DIDs that we reached out to for the given query hash by user" schemaName="i2b2demodata" tableName="contact_contacted">
-            <column name="contact_hash" type="TEXT" />
-            <column name="contact_user_id" type="TEXT" />
-            <column name="contacted_string" type="TEXT" />
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="contact_hash,contact_user_id" baseTableSchemaName="i2b2demodata" baseTableName="contact_contacted"
-                                 referencedTableName="contact" referencedTableSchemaName="i2b2demodata"
-                                 referencedColumnNames="hash,user_id"
-                                 constraintName="fk_constraint"
-        />
-    </changeSet>
-
 </databaseChangeLog>
