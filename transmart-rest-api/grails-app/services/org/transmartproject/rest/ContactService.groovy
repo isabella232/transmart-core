@@ -1,6 +1,7 @@
 package org.transmartproject.rest
 
 import grails.validation.ValidationException
+import groovy.util.logging.Slf4j
 import org.grails.web.converters.exceptions.ConverterException
 import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,7 @@ import org.transmartproject.db.multidimquery.DimensionImpl
 import org.transmartproject.rest.client.GBBackendClient
 import org.transmartproject.rest.marshallers.QueryRepresentation
 
+@Slf4j
 class ContactService implements ContactResource {
 
     @Autowired
@@ -44,8 +46,10 @@ class ContactService implements ContactResource {
 
     @Override
     ContactResponse contactForQuery(Long queryId, String synopsis, User user) {
+        log.info "Getting query representation"
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
         Constraint constraint = parseConstraint(queryRepresentation.queryConstraint)
+        log.info "Got constraint ${constraint.toJson()}"
 
         def invite = user.getPublicInvitation()
 
@@ -61,6 +65,7 @@ class ContactService implements ContactResource {
         }
 
         if (existingRecord != null) {
+            log.info "Existing records found for this query id"
             throw new ValidationException("Record already exists for this queryId")
         }
 
@@ -86,11 +91,15 @@ class ContactService implements ContactResource {
 
     @Override
     ContactResponse getContactRecord(Long queryId, User user) {
+        log.info "Getting the query representation"
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
+        log.info "Got query representation"
 
         def existingRecord = Contact.findWhere(queryId: queryID, user_id: user.getUsername())
+        log.info "Searched for existing record"
 
         if (existingRecord == null) {
+            log.info "No such record found"
             return new NoSuchResourceException()
         }
 

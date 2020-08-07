@@ -21,6 +21,6 @@ class GBBackendClient extends AbstractRestClient {
      */
     QueryRepresentation getQuery(Long queryId) {
         URI uri = URI.create("${backendUrl}/queries/${queryId}")
-        postAsCurrentUser(uri, null, QueryRepresentation.class)
+        getAsCurrentUser(uri, QueryRepresentation.class)
     }
 }

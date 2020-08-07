@@ -10,6 +10,8 @@ import org.transmartproject.core.contact.ContactResource
 import org.transmartproject.core.exceptions.InvalidArgumentsException
 import org.transmartproject.core.multidimquery.query.Constraint
 
+import static org.transmartproject.rest.misc.RequestUtils.checkForUnsupportedParams
+
 class ContactController extends AbstractQueryController {
 
     @Autowired

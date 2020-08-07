@@ -49,7 +49,7 @@ abstract class AbstractRestClient {
     }
 
     protected <T> T postAsCurrentUser(URI uri, Map<String, Object> body, Class<T> type) {
-        log.debug "Sending authorised post request from ${authContext.user.username} user."
+        log.info "Sending authorised post request from ${authContext.user.username} user."
         post(uri, body, type, getRestTemplateWithAuthorizationToken(authContext.token))
     }
 
@@ -67,7 +67,7 @@ abstract class AbstractRestClient {
     }
 
     protected <T> T getAsCurrentUser(URI uri, Class<T> type) {
-        log.debug "Sending authorised get request from ${authContext.user.username} user."
+        log.info "Sending authorised get request from ${authContext.user.username} user."
         get(uri, type, getRestTemplateWithAuthorizationToken(authContext.token))
     }
 
