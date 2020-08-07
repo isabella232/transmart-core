@@ -116,6 +116,12 @@ class KeycloakUserResourceService implements UsersResource {
         new SimpleUser(username, realName, email, admin, studyToAccLvl, publicInvitation)
     }
 
+    @Override
+    String getToken(Principal auth) {
+        assert auth instanceof Authentication
+        ((SimpleKeycloakAccount) auth.details).keycloakSecurityContext.getTokenString()
+    }
+
     private Set<String> getRolesForUser(String userId) {
         ResponseEntity<MappingsRepresentation> result = offlineTokenBasedRestTemplate.getForEntity(
                 "$keycloakServerUrl/admin/realms/$realm/users/$userId/role-mappings".toString(),

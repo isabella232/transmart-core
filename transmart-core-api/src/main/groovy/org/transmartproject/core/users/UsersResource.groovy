@@ -35,4 +35,11 @@ interface UsersResource {
      * @return
      */
     User getUserFromPrincipal(Principal principal)
+
+    /**
+     *
+     * @param principal
+     * @return the authentication token
+     */
+    String getToken(Principal principal);
 }

@@ -38,4 +38,8 @@ class MockUsersResource implements UsersResource {
         getUserFromUsername(principal.name)
     }
 
+    @Override
+    String getToken(Principal principal) {
+        throw new UnsupportedOperationException()
+    }
 }

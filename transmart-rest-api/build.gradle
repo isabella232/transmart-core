@@ -1,3 +1,11 @@
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:${grailsVersion}"
+        mavenBom "org.keycloak.bom:keycloak-adapter-bom:${keycloakVersion}"
+    }
+    applyMavenExclusions false
+}
+
 dependencies {
     compile 'org.javassist:javassist:3.16.1-GA'
 
@@ -37,6 +45,7 @@ dependencies {
     compile "commons-fileupload:commons-fileupload:1.4"
     compile 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
 
+    compile "org.keycloak:keycloak-legacy-spring-boot-starter"
     compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
     compile project(':transmart-core-api')
     compile project(':transmart-core-db')

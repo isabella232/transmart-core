@@ -8,4 +8,5 @@ import org.transmartproject.core.users.User
  */
 interface AuthContext {
     User getUser()
+    String getToken()
 }

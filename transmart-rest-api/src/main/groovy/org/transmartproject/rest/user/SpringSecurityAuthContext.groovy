@@ -25,6 +25,10 @@ class SpringSecurityAuthContext implements AuthContext {
         usersResource.getUserFromPrincipal(getAuthentication())
     }
 
+    String getToken() {
+        usersResource.getToken(getAuthentication())
+    }
+
     @Override
     String toString() {
         "SpringSecurityAuthContext(${getAuthentication().name})"

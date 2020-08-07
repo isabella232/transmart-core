@@ -1,19 +1,18 @@
 package org.transmartproject.db.contact
 
 class Contact implements  Serializable {
-    String hash
     String user_id
     Integer count
-
-    static hasMany = [contacted: String]
+    Long query_id
+    String synopsis
 
     static constraints = {
-        hash nullable: false
         user_id nullable: false
+        query_id nullable: false
     }
 
     static mapping = {
-        id composite: ['hash', 'user_id']
+        id composite: ['user_id', 'query_id']
         table name: 'contact', schema: 'i2b2demodata'
     }
 }

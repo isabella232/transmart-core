@@ -82,4 +82,9 @@ class UsersResourceService implements UsersResource {
     org.transmartproject.core.users.User getUserFromPrincipal(Principal principal) {
         return getUserFromUsername(principal.name)
     }
+
+    @Override
+    String getToken(Principal principal) {
+        throw new UnsupportedOperationException()
+    }
 }

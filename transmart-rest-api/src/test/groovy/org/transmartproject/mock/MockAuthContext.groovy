@@ -15,4 +15,9 @@ class MockAuthContext implements AuthContext {
         currentUser
     }
 
+    @Override
+    String getToken() {
+        throw new UnsupportedOperationException()
+    }
+
 }
