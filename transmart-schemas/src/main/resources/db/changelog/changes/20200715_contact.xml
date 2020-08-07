@@ -19,6 +19,6 @@
             <column name="synopsis" type="TEXT"/>
             <column name="version" type="BIGINT"/>
         </createTable>
-        <addPrimaryKey schemaName="i2b2demodata" tableName="contact" columnNames="hash,user_id" />
+        <addPrimaryKey schemaName="i2b2demodata" tableName="contact" columnNames="user_id,query_id" />
     </changeSet>
 </databaseChangeLog>
