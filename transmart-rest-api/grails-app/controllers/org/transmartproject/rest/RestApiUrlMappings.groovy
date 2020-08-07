@@ -116,10 +116,8 @@ class RestApiUrlMappings {
                 action = [GET: 'listPatients', POST: 'listPatients']
                 apiVersion = 'v2'
             }
-            "/contact/$queryId"(method: 'GET', controller: 'contact', action: 'show') {
-                apiVersion = 'v2'
-            }
-            "/contact/$queryId"(method: 'POST', controller: 'contact', action: 'save') {
+            "/contact/$queryId"(controller: 'contact') {
+                action = [GET: 'show', POST: 'save']
                 apiVersion = 'v2'
             }
             "/concepts"(method: 'GET', controller: 'concept', action: 'index') {

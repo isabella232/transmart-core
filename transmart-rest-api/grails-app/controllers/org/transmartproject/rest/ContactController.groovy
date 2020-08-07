@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.transmartproject.core.contact.ContactResource
+import org.transmartproject.core.exceptions.InvalidArgumentsException
 import org.transmartproject.core.multidimquery.query.Constraint
 
 class ContactController extends AbstractQueryController {
@@ -15,6 +16,10 @@ class ContactController extends AbstractQueryController {
     ContactResource contactResource
 
     def save(@RequestParam('api_version') String apiVersion, @PathVariable('queryId') Long queryId) {
+        if (queryId == null) {
+            throw new InvalidArgumentsException("Parameter 'id' is missing.")
+        }
+        def args = getGetOrPostParams()
         String synopsis = args.synopsis
         try {
             def contactResponse = contactResource.contactForQuery(queryId, synopsis, authContext.user)
@@ -25,6 +30,9 @@ class ContactController extends AbstractQueryController {
     }
 
     def show(@RequestParam('api_version') String apiVersion, @PathVariable('queryId') Long queryId) {
+        if (queryId == null) {
+            throw new InvalidArgumentsException("Parameter 'id' is missing.")
+        }
         try {
             def contactResponse = contactResource.getContactRecord(queryId, authContext.user)
             render contactResponse as JSON
