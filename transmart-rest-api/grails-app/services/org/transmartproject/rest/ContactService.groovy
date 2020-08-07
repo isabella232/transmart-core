@@ -95,7 +95,7 @@ class ContactService implements ContactResource {
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
         log.info "Got query representation"
 
-        def existingRecord = Contact.findWhere(queryId: queryID, user_id: user.getUsername())
+        def existingRecord = Contact.findWhere(query_id: queryID, user_id: user.getUsername())
         log.info "Searched for existing record"
 
         if (existingRecord == null) {
