@@ -11,7 +11,7 @@ import org.transmartproject.rest.marshallers.QueryRepresentation
 @CompileStatic
 class GBBackendClient extends AbstractRestClient {
 
-    @Value('${glowingbear.backend-url')
+    @Value('${glowingbear.backend-url}')
     private String backendUrl
 
     /**
@@ -20,7 +20,9 @@ class GBBackendClient extends AbstractRestClient {
      * @return QueryRepresentation
      */
     QueryRepresentation getQuery(Long queryId) {
+        log.info "backendUrl = ${backendUrl}"
         URI uri = URI.create("${backendUrl}/queries/${queryId}")
+        log.info "URI = ${uri}"
         getAsCurrentUser(uri, QueryRepresentation.class)
     }
 }
