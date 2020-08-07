@@ -36,7 +36,7 @@ class ContactService implements ContactResource {
         try {
             def result = ConstraintFactory.create(constraint)
             if (result) {
-                return constraint.normalise()
+                return result.normalise()
             }
             throw new InvalidArgumentsException("Invalid constraint parameter: ${constraintText}")
         } catch (ConverterException c) {
