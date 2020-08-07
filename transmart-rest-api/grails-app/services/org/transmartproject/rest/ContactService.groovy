@@ -76,7 +76,7 @@ class ContactService implements ContactResource {
         Contact contactRecord = new Contact(
                 user_id: user.getUsername(),
                 count: count,
-                queryId: queryId,
+                query_id: queryId,
                 synopsis: synopsis,
         )
         contactRecord.save(flush: true, failOnError: true)
