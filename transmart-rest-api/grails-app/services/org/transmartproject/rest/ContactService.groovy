@@ -96,7 +96,7 @@ class ContactService implements ContactResource {
             HttpPost httpPost = new HttpPost("http://localhost:6001/api/1.0/cohort")
 
             Invite inviteObj = objectMapper.readValue(invite, Invite.class)
-            def req = new CreateCohortRequest(did: didList, synopsis: synopsis, cohortID: new String(queryId), invite: inviteObj)
+            def req = new CreateCohortRequest(did: didList, synopsis: synopsis, cohortID: queryId.toString(), invite: inviteObj)
             def marshaled = objectMapper.writeValueAsString(req)
             def marshaledEntity = new StringEntity(marshaled, ContentType.APPLICATION_JSON)
 
