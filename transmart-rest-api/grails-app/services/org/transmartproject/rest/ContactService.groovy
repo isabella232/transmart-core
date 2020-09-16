@@ -1,7 +1,16 @@
 package org.transmartproject.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.annotations.JsonAdapter
 import grails.validation.ValidationException
 import groovy.util.logging.Slf4j
+import org.apache.http.client.HttpClient
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.HttpClients
 import org.grails.web.converters.exceptions.ConverterException
 import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +28,7 @@ import org.transmartproject.db.contact.Contact
 import org.transmartproject.db.multidimquery.DimensionImpl
 import org.transmartproject.rest.client.GBBackendClient
 import org.transmartproject.rest.marshallers.QueryRepresentation
+
 
 @Slf4j
 class ContactService implements ContactResource {
@@ -50,7 +60,7 @@ class ContactService implements ContactResource {
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
         Constraint constraint = parseConstraint(queryRepresentation.queryConstraint)
         log.info "Got constraint ${constraint.toJson()}"
-
+//
         def invite = user.getPublicInvitation()
 
         def existingRecord = Contact.findWhere(query_id: queryId, user_id: user.getUsername())
@@ -72,6 +82,34 @@ class ContactService implements ContactResource {
         // TODO: count would be the number of DIDs that received the message successfully
         def count = did.size()
         log.info "Contacting patients with identifiers ${did} and sending them `${invite}`, `${synopsis}` and `${queryId}"
+
+        def didList = new ArrayList<String>()
+        for (String id : did) {
+            if (id.startsWith("did:sov")) {
+                didList.add(id)
+            }
+        }
+
+        if (didList.size() > 0) {
+            ObjectMapper objectMapper = new ObjectMapper()
+            HttpClient client = HttpClients.createDefault()
+            HttpPost httpPost = new HttpPost("http://localhost:6001/api/1.0/cohort")
+
+            Invite inviteObj = objectMapper.readValue(invite, Invite.class)
+            def req = new CreateCohortRequest(did: didList, synopsis: synopsis, cohortID: new String(queryId), invite: inviteObj)
+            def marshaled = objectMapper.writeValueAsString(req)
+            def marshaledEntity = new StringEntity(marshaled, ContentType.APPLICATION_JSON)
+
+            log.info "Sending request with body: ${marshaled}"
+
+            httpPost.setEntity(marshaledEntity)
+            httpPost.setHeader("Content-Type", "application/json")
+
+            def response = client.execute(httpPost)
+            client.close()
+        } else {
+            log.info "No did found"
+        }
 
         Contact contactRecord = new Contact(
                 user_id: user.getUsername(),
@@ -95,7 +133,7 @@ class ContactService implements ContactResource {
         QueryRepresentation queryRepresentation = client.getQuery(queryId)
         log.info "Got query representation"
 
-        def existingRecord = Contact.findWhere(query_id: queryID, user_id: user.getUsername())
+        def existingRecord = Contact.findWhere(query_id: queryId, user_id: user.getUsername())
         log.info "Searched for existing record"
 
         if (existingRecord == null) {
@@ -109,4 +147,20 @@ class ContactService implements ContactResource {
                 totalCount: existingRecord.count,
         )
     }
+}
+
+class CreateCohortRequest {
+    List<String> did
+    Invite invite
+    String synopsis
+    String cohortID
+}
+
+class Invite {
+    @JsonProperty("@id")
+    String id
+    String label
+    String did
+    @JsonProperty("@type")
+    String type
 }

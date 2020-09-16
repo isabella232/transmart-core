@@ -29,6 +29,7 @@ dependencies {
     console("org.grails:grails-console") {
         exclude group: 'org.fusesource.jansi', module: 'jansi'
     }
+    compile 'org.grails:grails-datastore-rest-client'
 
     compile "org.hibernate:hibernate-ehcache"
 
